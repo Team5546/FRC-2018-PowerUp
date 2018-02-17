@@ -1,4 +1,4 @@
-package org.usfirst.frc.team5546.robot.commands;
+package org.usfirst.frc.team5546.robot.commands.driveTrain;
 
 import org.usfirst.frc.team5546.robot.Robot;
 
@@ -19,7 +19,11 @@ public class Drive extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	Robot.driveTrain.driveTank(Robot.oi.leftStick.getRawAxis(1), Robot.oi.rightStick.getRawAxis(1));
+		if(Robot.driveChooser.getSelected() == "Tank") {
+			Robot.driveTrain.driveTank(-Robot.oi.leftStick.getRawAxis(1), -Robot.oi.rightStick.getRawAxis(1));
+		} else if(Robot.driveChooser.getSelected() == "Arcade") {
+			Robot.driveTrain.driveArcade(-Robot.oi.rightStick.getRawAxis(1), Robot.oi.rightStick.getRawAxis(0));
+		}
     }
 
     // Make this return true when this Command no longer needs to run execute()

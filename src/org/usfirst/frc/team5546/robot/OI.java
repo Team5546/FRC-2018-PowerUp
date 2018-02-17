@@ -7,7 +7,20 @@
 
 package org.usfirst.frc.team5546.robot;
 
+import org.usfirst.frc.team5546.robot.commands.auto.AutoCenterRight;
+import org.usfirst.frc.team5546.robot.commands.driveTrain.DriveFor;
+import org.usfirst.frc.team5546.robot.commands.elevator.ScaleDown;
+import org.usfirst.frc.team5546.robot.commands.elevator.ScaleUp;
+import org.usfirst.frc.team5546.robot.commands.elevator.SwitchDown;
+import org.usfirst.frc.team5546.robot.commands.elevator.SwitchUp;
+import org.usfirst.frc.team5546.robot.commands.manipulator.SuckIn;
+import org.usfirst.frc.team5546.robot.commands.manipulator.SuckOut;
+import org.usfirst.frc.team5546.robot.commands.winch.DisableSafety;
+import org.usfirst.frc.team5546.robot.commands.winch.EnableSafety;
+
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.buttons.Button;
+import edu.wpi.first.wpilibj.buttons.JoystickButton;
 
 /**
  * This class is the glue that binds the controls on the physical operator
@@ -43,4 +56,44 @@ public class OI {
 	// button.whenReleased(new ExampleCommand());
 	public Joystick leftStick = new Joystick(0);
 	public Joystick rightStick = new Joystick(1);
+	public Joystick launchpad = new Joystick(2);
+	public Joystick xbox = new Joystick(3);
+	
+	public Button turnRight = new JoystickButton(launchpad, 7);
+	public Button driveForward = new JoystickButton(launchpad, 4);
+	public Button elevator = new JoystickButton(launchpad, 6);
+	public Button winchSafety = new JoystickButton(launchpad, 2);
+	
+	public Button suckIn = new JoystickButton(rightStick, 1);
+	public Button suckOut = new JoystickButton(leftStick, 1);
+	
+	public Button leftSwitch = new JoystickButton(rightStick, 3);
+	public Button rightSwitch = new JoystickButton(rightStick, 4);
+	public Button leftScale = new JoystickButton(leftStick, 3);
+	public Button rightScale = new JoystickButton(leftStick, 4);
+	
+	public OI() {
+		turnRight.whenReleased(new AutoCenterRight());
+		
+		//gearGrab.whenReleased(new TestChute());
+		driveForward.whenReleased(new DriveFor(1, 1));
+		
+		elevator.whenPressed(new ScaleUp());
+		
+		winchSafety.whenPressed(new DisableSafety());
+		winchSafety.whenReleased(new EnableSafety());
+		
+		suckIn.whileActive(new SuckIn(1));
+		suckOut.whileActive(new SuckOut(0.8));
+		
+		leftSwitch.whenPressed(new SwitchUp());
+		rightSwitch.whenPressed(new SwitchUp());
+		leftSwitch.whenReleased(new SwitchDown());
+		rightSwitch.whenReleased(new SwitchDown());
+		
+		leftScale.whenPressed(new ScaleUp());
+		rightScale.whenPressed(new ScaleUp());
+		leftScale.whenReleased(new ScaleDown());
+		rightScale.whenReleased(new ScaleDown());
+	}
 }

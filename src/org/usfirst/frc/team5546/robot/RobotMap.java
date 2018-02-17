@@ -27,4 +27,15 @@ public class RobotMap {
 	public static final int LEFT_BACK_MOTOR = 1;
 	public static final int RIGHT_FRONT_MOTOR = 2;
 	public static final int RIGHT_BACK_MOTOR = 3;
+	
+	public static final int STAGE1_FORWARD = 0;
+	public static final int STAGE1_REVERSE = 1;
+	public static final int STAGE2_FORWARD = 2;
+	public static final int STAGE2_REVERSE = 3;
+	
+	public static final int WINCH_LEFT = 6;
+	public static final int WINCH_RIGHT = 7;
+	
+	public static final int MANIPULATOR_LEFT = 4;
+	public static final int MANIPULATOR_RIGHT = 5;
 }
