@@ -7,14 +7,26 @@
 
 package org.usfirst.frc.team5546.robot;
 
+import org.opencv.core.Mat;
+import org.opencv.imgproc.Imgproc;
+import org.usfirst.frc.team5546.robot.commands.auto.AutoCenterLeft;
 import org.usfirst.frc.team5546.robot.commands.auto.AutoCenterRight;
-import org.usfirst.frc.team5546.robot.commands.driveTrain.RotateToAngle;
+import org.usfirst.frc.team5546.robot.commands.auto.AutoLeftLeft;
+import org.usfirst.frc.team5546.robot.commands.auto.AutoLeftNone;
+import org.usfirst.frc.team5546.robot.commands.auto.AutoLeftScale;
+import org.usfirst.frc.team5546.robot.commands.auto.AutoRightNone;
+import org.usfirst.frc.team5546.robot.commands.auto.AutoRightRight;
+import org.usfirst.frc.team5546.robot.commands.auto.AutoRightScale;
 import org.usfirst.frc.team5546.robot.subsystems.DriveTrain;
 import org.usfirst.frc.team5546.robot.subsystems.Elevator;
 import org.usfirst.frc.team5546.robot.subsystems.Manipulator;
 import org.usfirst.frc.team5546.robot.subsystems.PneumaticCompressor;
 import org.usfirst.frc.team5546.robot.subsystems.Winch;
 
+import edu.wpi.cscore.CvSink;
+import edu.wpi.cscore.CvSource;
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.command.Command;
@@ -42,15 +54,12 @@ public class Robot extends IterativeRobot {
 	String gameData;
 	
 	public static boolean winchSafety = true;
-	
-	public static int switchButtonCount = 0;
-	public static int scaleButtonCount = 0;
+	public static boolean driveTrainInverted = false;
 
-	Command m_autonomousCommand;
-	public static SendableChooser<String> driveChooser = new SendableChooser<String>();
-	
-	public static SendableChooser<Command> autoChooser = new SendableChooser<Command>();
+	Command autoCommand;
 
+	public static SendableChooser<String> autoChooser = new SendableChooser<String>();
+	public static SendableChooser<String> priorityChooser = new SendableChooser<String>();
 	/**
 	 * This function is run when the robot is first started up and should be
 	 * used for any initialization code.
@@ -59,16 +68,37 @@ public class Robot extends IterativeRobot {
 	public void robotInit() {
 		oi = new OI();
 		
-		driveChooser.addDefault("Tank", "Tank");
-		driveChooser.addObject("Arcade", "Arcade");
-		SmartDashboard.putData("Drive mode", driveChooser);
+		autoChooser.addDefault("Center", "Center");
+		autoChooser.addObject("Left", "Left");
+		autoChooser.addObject("Right", "Right");
+		SmartDashboard.putData("Position", autoChooser);
 		
-		autoChooser.addDefault("Center", new AutoCenterRight());
-		SmartDashboard.putData("Auto", autoChooser);
+		priorityChooser.addDefault("Switch", "Switch");
+		priorityChooser.addObject("Scale", "Scale");
+		SmartDashboard.putData("Priority", priorityChooser);
 		
-		SmartDashboard.putData(new RotateToAngle(90));
 		elevator.switchDown();
 		elevator.scaleDown();
+		
+		//CameraServer.getInstance().startAutomaticCapture();
+		new Thread(() -> {
+			UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
+			camera.setResolution(640,  480);
+			
+			CvSink cvSink = CameraServer.getInstance().getVideo();
+			CvSource outputStream = CameraServer.getInstance().putVideo("Blur", 640, 480);
+			
+			Mat source = new Mat();
+			Mat output = new Mat();
+			
+			while(!Thread.interrupted()) {
+				cvSink.grabFrame(source);
+				Imgproc.cvtColor(source, output, Imgproc.COLOR_BayerBG2BGR);
+				outputStream.putFrame(output);
+			}
+		}).start();
+		
+		SmartDashboard.putData(new AutoLeftScale());
 	}
 
 	/**
@@ -105,29 +135,72 @@ public class Robot extends IterativeRobot {
 	public void autonomousInit() {
 		
 		// Set game data
-//		gameData = DriverStation.getInstance().getGameSpecificMessage();
-//		System.out.println(gameData);
-//		// Set auto command based on game data
-//        if(gameData.length() > 0) {
-//		  if(gameData.charAt(0) == 'L') {
-//			//Put left auto code here
-//		  } else {
-//			//Put right auto code here
-//			  System.out.println("Should run auto right.");
-//			  
-//			  m_autonomousCommand = new AutoCenterRight();
-//		  }
-//        }
+		gameData = DriverStation.getInstance().getGameSpecificMessage();
 		
-		m_autonomousCommand = autoChooser.getSelected();
-
-		/*
-		 * String autoSelected = SmartDashboard.getString("Auto Selector",
-		 * "Default"); switch(autoSelected) { case "My Auto": autonomousCommand
-		 * = new MyAutoCommand(); break; case "Default Auto": default:
-		 * autonomousCommand = new ExampleCommand(); break; }
-		 */
-        m_autonomousCommand.start();
+		String position = autoChooser.getSelected();
+		String priority = priorityChooser.getSelected();
+		
+		// Set auto command based on game data
+        if(gameData.length() > 0) {
+        	if(priority == "Switch") {
+        		if(position == "Left") {
+        			if(gameData.charAt(0) == 'L') {
+        				autoCommand = new AutoLeftLeft();
+        			} else {
+        				if(gameData.charAt(1) == 'L') {
+        					autoCommand = new AutoLeftScale();
+        				} else {
+        					autoCommand = new AutoLeftNone();
+        				}
+        			}
+        		} else if(position == "Right") {
+        			if(gameData.charAt(0) == 'R') {
+        				autoCommand = new AutoRightRight();
+        			} else {
+        				if(gameData.charAt(1) == 'R') {
+        					autoCommand = new AutoRightScale();
+        				} else {
+        					autoCommand = new AutoRightNone();
+        				}
+        			}
+        		} else {
+        			if(gameData.charAt(0) == 'R') {
+        				autoCommand = new AutoCenterRight();
+        			} else {
+        				autoCommand = new AutoCenterLeft();
+        			}
+        		}
+        	} else {
+        		if(position == "Left") {
+        			if(gameData.charAt(1) == 'L') {
+        				autoCommand = new AutoLeftScale();
+        			} else {
+        				if(gameData.charAt(0) == 'L') {
+        					autoCommand = new AutoLeftLeft();
+        				} else {
+        					autoCommand = new AutoLeftNone();
+        				}
+        			}
+        		} else if(position == "Right") {
+        			if(gameData.charAt(1) == 'R') {
+        				autoCommand = new AutoRightScale();
+        			} else {
+        				if(gameData.charAt(0) == 'R') {
+        					autoCommand = new AutoRightRight();
+        				} else {
+        					autoCommand = new AutoRightNone();
+        				}
+        			}
+        		} else {
+        			if(gameData.charAt(0) == 'R') {
+        				autoCommand = new AutoCenterRight();
+        			} else {
+        				autoCommand = new AutoCenterLeft();
+        			}
+        		}
+        	}
+        }
+        autoCommand.start();
         
         SmartDashboard.putData("Scheduler", Scheduler.getInstance());
 	}
@@ -146,8 +219,8 @@ public class Robot extends IterativeRobot {
 		// teleop starts running. If you want the autonomous to
 		// continue until interrupted by another command, remove
 		// this line or comment it out.
-		if (m_autonomousCommand != null) {
-			m_autonomousCommand.cancel();
+		if (autoCommand != null) {
+			autoCommand.cancel();
 		}
 	}
 

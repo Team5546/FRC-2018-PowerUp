@@ -1,6 +1,7 @@
 package org.usfirst.frc.team5546.robot.subsystems;
 
 import org.usfirst.frc.team5546.robot.ADIS16448_IMU;
+import org.usfirst.frc.team5546.robot.Robot;
 import org.usfirst.frc.team5546.robot.RobotMap;
 import org.usfirst.frc.team5546.robot.commands.driveTrain.Drive;
 
@@ -23,6 +24,8 @@ public class DriveTrain extends PIDSubsystem {
 	public final double DISTANCE_PER_FOOT = 1287;
 	
 	public boolean rotate = false;
+	boolean inverted;
+	public boolean squaredInputs = false;
 
     VictorSP leftFront, leftBack, rightFront, rightBack;
     
@@ -30,7 +33,7 @@ public class DriveTrain extends PIDSubsystem {
     
     DifferentialDrive drive;
     
-	public double speed = 0;
+	public double spd;
 	public double distanceToPeg = 0;
 	public double centeringDirection = 1;
 	public double centerOffset = 0;
@@ -52,21 +55,44 @@ public class DriveTrain extends PIDSubsystem {
 		imu = new ADIS16448_IMU(); 
 		encoderLeft = new Encoder(0, 1);
     	ultrasonic = new AnalogInput(0);
+    	
+    	spd = 0;
 	}
 	
 	public void driveTank(double leftSpeed, double rightSpeed) {
-		drive.tankDrive(leftSpeed, rightSpeed);
+		setInverted();
+		double l, r;
+		if(inverted) {
+			l = -rightSpeed;
+			r = -leftSpeed;
+		} else {
+			l = leftSpeed;
+			r = rightSpeed;
+		}
+		drive.tankDrive(l, r);
 	}
 	
-	public void driveArcade(double moveValue, double rotateValue) {
-		drive.arcadeDrive(moveValue, rotateValue);
+	public void driveTankSquared(double leftSpeed, double rightSpeed) {
+		setInverted();
+		double l, r;
+		if(inverted) {
+			l = -rightSpeed;
+			r = -leftSpeed;
+		} else {
+			l = leftSpeed;
+			r = rightSpeed;
+		}
+		drive.tankDrive(l, r, true);
 	}
 
     public void initDefaultCommand() {
-        // Set the default command for a subsystem here.
-        //setDefaultCommand(new MySpecialCommand());
     	setDefaultCommand(new Drive());
     }
+    
+    public void setInverted() {
+    	inverted = Robot.driveTrainInverted;
+    }
+    
     protected double returnPIDInput() {
         if (rotate) {
         	return imu.getAngleZ();
@@ -77,11 +103,11 @@ public class DriveTrain extends PIDSubsystem {
 
     protected void usePIDOutput(double output) {
     	if (rotate) {
-    		drive.tankDrive(output * 0.8, -output * 0.8);
+    		drive.tankDrive(output * spd, -output * spd);
+    	} else if(squaredInputs) {
+    		drive.tankDrive(output * spd * 2.5, output * spd * 2.5, true);
     	} else {
-    		//drive.arcadeDrive(output * speed, imu.getAngleZ() * 0.05);
-    		System.out.println(output * speed * 2.5);
-    		drive.tankDrive(output * speed * 2.5, output * speed * 2.5);
+    		drive.tankDrive(output * spd * 2.5, output * spd * 2.5);
     	}
     }
 }

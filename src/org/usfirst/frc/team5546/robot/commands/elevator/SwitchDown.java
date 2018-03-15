@@ -15,10 +15,7 @@ public class SwitchDown extends Command {
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	Robot.switchButtonCount--;
-    	if(Robot.switchButtonCount == 0) {
-    		Robot.elevator.switchDown();
-    	}
+		Robot.elevator.switchDown();
     }
 
     // Called repeatedly when this Command is scheduled to run

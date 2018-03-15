@@ -15,10 +15,7 @@ public class ScaleDown extends Command {
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	Robot.scaleButtonCount--;
-    	if(Robot.scaleButtonCount == 0) {
-    		Robot.elevator.scaleDown();
-    	}
+		Robot.elevator.scaleDown();
     }
 
     // Called repeatedly when this Command is scheduled to run

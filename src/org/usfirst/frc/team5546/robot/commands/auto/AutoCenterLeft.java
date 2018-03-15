@@ -13,15 +13,15 @@ import edu.wpi.first.wpilibj.command.WaitCommand;
 /**
  *
  */
-public class AutoCenterRight extends CommandGroup {
+public class AutoCenterLeft extends CommandGroup {
 
-    public AutoCenterRight() {
+    public AutoCenterLeft() {
     	addParallel(new SuckIn(.3));
     	addParallel(new SwitchUp());
     	addSequential(new DriveFor(4, .2));
+    	addSequential(new RotateToAngle(-91, 0.6));
+    	addSequential(new DriveFor(4.3, .2));
     	addSequential(new RotateToAngle(91, 0.6));
-    	addSequential(new DriveFor(3.9, .2));
-    	addSequential(new RotateToAngle(-95, 0.6));
     	addParallel(new DriveFor(4.2, .2));
     	addSequential(new WaitCommand(2.5));
     	addSequential(new SuckOut(0.8));

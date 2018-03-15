@@ -7,13 +7,12 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  *
  */
-public class DriveFor extends Command {
-
+public class DriveForSquared extends Command {
 	boolean finished = false;
 	double distance = 0;
 	double speed;
 	
-    public DriveFor(double feet, double _speed) {
+    public DriveForSquared(double feet, double _speed) {
         // Use requires() here to declare subsystem dependencies
         requires(Robot.driveTrain);
         this.distance = feet * Robot.driveTrain.DISTANCE_PER_FOOT;
@@ -24,7 +23,7 @@ public class DriveFor extends Command {
     // Called just before this Command runs the first time
     protected void initialize() {
     	Robot.driveTrain.rotate = false;
-    	Robot.driveTrain.squaredInputs = false;
+    	Robot.driveTrain.squaredInputs = true;
     	Robot.driveTrain.encoderLeft.reset();
     	Robot.driveTrain.imu.reset();
     	Robot.driveTrain.getPIDController().setPID(4, 0.1, 0);

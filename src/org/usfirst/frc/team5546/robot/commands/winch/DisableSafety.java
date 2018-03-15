@@ -12,7 +12,6 @@ public class DisableSafety extends Command {
     // Called just before this Command runs the first time
     protected void initialize() {
     	//System.out.println("disable winch");
-    	Robot.winchSafety = false;
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -21,7 +20,8 @@ public class DisableSafety extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return false;
+    	Robot.winchSafety = false;
+        return true;
     }
 
     // Called once after isFinished returns true

@@ -1,25 +1,25 @@
-package org.usfirst.frc.team5546.robot.commands.elevator;
-
-import org.usfirst.frc.team5546.robot.Robot;
+package org.usfirst.frc.team5546.robot.commands.auto;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.command.Scheduler;
 
 /**
  *
  */
-public class SwitchUp extends Command {
+public class CancelAll extends Command {
 
-    public SwitchUp() {
-        requires(Robot.elevator);
+    public CancelAll() {
+        // Use requires() here to declare subsystem dependencies
+        // eg. requires(chassis);
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	Robot.elevator.switchUp();
     }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
+    	Scheduler.getInstance().removeAll();
     }
 
     // Make this return true when this Command no longer needs to run execute()

@@ -19,11 +19,7 @@ public class Drive extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-		if(Robot.driveChooser.getSelected() == "Tank") {
-			Robot.driveTrain.driveTank(-Robot.oi.leftStick.getRawAxis(1), -Robot.oi.rightStick.getRawAxis(1));
-		} else if(Robot.driveChooser.getSelected() == "Arcade") {
-			Robot.driveTrain.driveArcade(-Robot.oi.rightStick.getRawAxis(1), Robot.oi.rightStick.getRawAxis(0));
-		}
+		Robot.driveTrain.driveTank(-Robot.oi.leftStick.getY(), -Robot.oi.rightStick.getY());
     }
 
     // Make this return true when this Command no longer needs to run execute()
