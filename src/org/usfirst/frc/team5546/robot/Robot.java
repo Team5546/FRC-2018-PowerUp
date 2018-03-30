@@ -75,6 +75,9 @@ public class Robot extends IterativeRobot {
 		
 		priorityChooser.addDefault("Switch", "Switch");
 		priorityChooser.addObject("Scale", "Scale");
+		priorityChooser.addObject("SWITCH ONLY", "SWITCH ONLY");
+		priorityChooser.addObject("DRIVE FORWARD", "DRIVE FORWARD");
+		priorityChooser.addObject("don't move", "don't move");
 		SmartDashboard.putData("Priority", priorityChooser);
 		
 		elevator.switchDown();
@@ -170,7 +173,7 @@ public class Robot extends IterativeRobot {
         				autoCommand = new AutoCenterLeft();
         			}
         		}
-        	} else {
+        	} else if(priority == "Scale") {
         		if(position == "Left") {
         			if(gameData.charAt(1) == 'L') {
         				autoCommand = new AutoLeftScale();
@@ -198,9 +201,41 @@ public class Robot extends IterativeRobot {
         				autoCommand = new AutoCenterLeft();
         			}
         		}
+        	} else if(priority == "SWITCH ONLY") {
+        		if(position == "Left") {
+        			if(gameData.charAt(0) == 'L') {
+        				autoCommand = new AutoLeftLeft();
+        			} else {
+        				autoCommand = new AutoLeftNone();
+        			}
+        		} else if(position == "Right") {
+        			if(gameData.charAt(0) == 'R') {
+        				autoCommand = new AutoRightRight();
+        			} else {
+        				autoCommand = new AutoRightNone();
+        			}
+        		} else if(position == "Center") {
+        			if(gameData.charAt(0) == 'L') {
+        				autoCommand = new AutoCenterLeft();
+        			} else {
+        				autoCommand = new AutoCenterRight();
+        			}
+        		}
+        	} else {
+        		if(position == "Left") {
+        			autoCommand = new AutoLeftNone();
+        		} else if(position == "Right") {
+        			autoCommand = new AutoRightNone();
+        		} else if(position == "Center") {
+        			if(gameData.charAt(0) == 'L') {
+        				autoCommand = new AutoCenterLeft();
+        			} else {
+        				autoCommand = new AutoCenterRight();
+        			}
+        		}
         	}
         }
-        autoCommand.start();
+        if(priority != "don't move") autoCommand.start();
         
         SmartDashboard.putData("Scheduler", Scheduler.getInstance());
 	}

@@ -19,8 +19,15 @@ public class Lift extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	//System.out.println(Robot.oi.xbox.getRawAxis(3));
-    	Robot.winch.run(Robot.oi.xbox.getRawAxis(3));
+//    	System.out.println("||||||||||||||||||");
+//    	System.out.println(Robot.oi.xbox.getRawAxis(3));
+    	if(Robot.oi.xbox.getRawAxis(3) > 0.0) {
+    		Robot.winch.run(Robot.oi.xbox.getRawAxis(3));
+    	}
+    	if(Robot.oi.backupWinchClimb.get()) {
+    		Robot.winch.run(1);
+    	};
+    	
     }
 
     // Make this return true when this Command no longer needs to run execute()

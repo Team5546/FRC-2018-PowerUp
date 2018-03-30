@@ -10,6 +10,7 @@ package org.usfirst.frc.team5546.robot;
 import org.usfirst.frc.team5546.robot.commands.auto.AutoLeftScale;
 import org.usfirst.frc.team5546.robot.commands.auto.AutoRightScale;
 import org.usfirst.frc.team5546.robot.commands.auto.CancelAll;
+import org.usfirst.frc.team5546.robot.commands.driveTrain.DriveFor;
 import org.usfirst.frc.team5546.robot.commands.driveTrain.SetBackwards;
 import org.usfirst.frc.team5546.robot.commands.driveTrain.SetForwards;
 import org.usfirst.frc.team5546.robot.commands.elevator.ScaleDown;
@@ -38,8 +39,11 @@ public class OI {
 	public Button scaleRightAuto = new JoystickButton(launchpad, 7);
 	public Button cancelButton = new JoystickButton(launchpad, 8);
 	public Button scaleLeftAuto = new JoystickButton(launchpad, 9);
+	//public Button driveForOne = new JoystickButton(launchpad, 6);
 	
 	public Button winchSafety = new JoystickButton(xbox, 5);
+	public Button backupWinchSafety = new JoystickButton(launchpad, 6);
+	public Button backupWinchClimb = new JoystickButton(launchpad, 5);
 	
 	public Button switchToggle = new JoystickButton(rightStick, 1);
 	public Button scaleToggle = new JoystickButton(leftStick, 1);
@@ -57,9 +61,12 @@ public class OI {
 		scaleRightAuto.whenReleased(new AutoRightScale());
 		cancelButton.whenReleased(new CancelAll());
 		scaleLeftAuto.whenPressed(new AutoLeftScale());
+		//driveForOne.whenPressed(new DriveFor(1, 0.2));
 		
 		winchSafety.whenPressed(new DisableSafety());
 		winchSafety.whenReleased(new EnableSafety());
+		backupWinchSafety.whenPressed(new DisableSafety());
+		backupWinchSafety.whenReleased(new EnableSafety());
 		
 		switchToggle.whenPressed(new SwitchUp());;
 		scaleToggle.whenPressed(new ScaleUp());
