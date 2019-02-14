@@ -7,63 +7,17 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  *
  */
-//public class RotateToAngle extends Command {
-//
-//	double setpoint = 0;
-//	double offset = 3.0;
-//	
-//    public RotateToAngle(double setpoint) {
-//    	this.setpoint = setpoint;
-//        requires(Robot.driveTrain);
-//        System.out.println(setpoint);
-//    }
-//
-//    // Called just before this Command runs the first time
-//    protected void initialize() {
-//    	Robot.driveTrain.enable();
-//    	Robot.driveTrain.imu.reset();
-//    	Robot.driveTrain.rotate = true;
-//    	
-//    	Robot.driveTrain.getPIDController().setPID(0.10, 0, 0.3);
-//    	Robot.driveTrain.setAbsoluteTolerance(offset);
-//    	Robot.driveTrain.setSetpointRelative(setpoint);
-//    	System.out.println(setpoint);
-//    }
-//
-//    // Called repeatedly when this Command is scheduled to run
-//    protected void execute() {
-//    	//SmartDashboard.putNumber("setpoint", Robot.driveTrain.getSetpoint());
-//    	//SmartDashboard.putNumber("imu", Robot.driveTrain.imu.getAngleZ());
-//    }
-//
-//    // Make this return true when this Command no longer needs to run execute()
-//    protected boolean isFinished() {
-//    	//System.out.println("RotateToAngle Fisnished.");
-//        return Robot.driveTrain.onTarget();
-//    }
-//
-//    // Called once after isFinished returns true
-//    protected void end() {
-//    	System.out.println("Finished Rotate");
-//    	Robot.driveTrain.disable();
-//    }
-//
-//    // Called when another command which requires one or more of the same
-//    // subsystems is scheduled to run
-//    protected void interrupted() {
-//    	Robot.driveTrain.disable();
-//    }
-//}
-//
 public class RotateToAngle extends Command {
 	
 	double setpoint = 0;
 	double offset = 3.0;
 	
-    public RotateToAngle(double setpoint) {
+	double speed;
+	
+    public RotateToAngle(double setpoint, double s) {
     	this.setpoint = setpoint;
         requires(Robot.driveTrain);
-        //System.out.println(setpoint);
+        speed = s;
     }
 
     // Called just before this Command runs the first time
@@ -71,7 +25,7 @@ public class RotateToAngle extends Command {
     	Robot.driveTrain.enable();
     	Robot.driveTrain.imu.reset();
     	Robot.driveTrain.rotate = true;
-    	
+    	Robot.driveTrain.spd = speed;
     	Robot.driveTrain.getPIDController().setPID(0.10, 0.1, 0.3);
     	Robot.driveTrain.setAbsoluteTolerance(offset);
     	Robot.driveTrain.setSetpointRelative(setpoint);

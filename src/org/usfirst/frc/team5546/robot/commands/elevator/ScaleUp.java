@@ -16,7 +16,6 @@ public class ScaleUp extends Command {
     // Called just before this Command runs the first time
     protected void initialize() {
     	Robot.elevator.scaleUp();
-    	Robot.scaleButtonCount++;
     }
 
     // Called repeatedly when this Command is scheduled to run

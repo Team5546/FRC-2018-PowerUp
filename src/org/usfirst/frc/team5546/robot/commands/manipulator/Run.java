@@ -1,4 +1,4 @@
-package org.usfirst.frc.team5546.robot.commands.elevator;
+package org.usfirst.frc.team5546.robot.commands.manipulator;
 
 import org.usfirst.frc.team5546.robot.Robot;
 
@@ -7,19 +7,19 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  *
  */
-public class SwitchUp extends Command {
+public class Run extends Command {
 
-    public SwitchUp() {
-        requires(Robot.elevator);
+    public Run() {
+        requires(Robot.manipulator);
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	Robot.elevator.switchUp();
     }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
+    	Robot.manipulator.run(Robot.oi.leftStick.getZ(), Robot.oi.rightStick.getZ());
     }
 
     // Make this return true when this Command no longer needs to run execute()

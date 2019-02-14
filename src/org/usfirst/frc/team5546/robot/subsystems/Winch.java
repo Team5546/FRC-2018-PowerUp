@@ -29,7 +29,7 @@ public class Winch extends Subsystem {
     }
     
     public void run(double speed) {
-    	//System.out.println(safety);
+    	//System.out.println(Robot.winchSafety);
     	if(!Robot.winchSafety) {
     		winch.tankDrive(speed, speed, true);
     	}

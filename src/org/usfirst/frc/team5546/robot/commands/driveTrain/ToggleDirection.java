@@ -1,4 +1,4 @@
-package org.usfirst.frc.team5546.robot.commands.elevator;
+package org.usfirst.frc.team5546.robot.commands.driveTrain;
 
 import org.usfirst.frc.team5546.robot.Robot;
 
@@ -7,15 +7,14 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  *
  */
-public class SwitchUp extends Command {
+public class ToggleDirection extends Command {
 
-    public SwitchUp() {
-        requires(Robot.elevator);
+    public ToggleDirection() {
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	Robot.elevator.switchUp();
+    	Robot.driveTrainInverted = !Robot.driveTrainInverted;
     }
 
     // Called repeatedly when this Command is scheduled to run
